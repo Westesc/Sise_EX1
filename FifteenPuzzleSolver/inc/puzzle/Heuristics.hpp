@@ -8,13 +8,13 @@
 
 #include <cstdint>
 
-struct heuristics {
+struct Heuristics {
 	static uint16_t hamming(state* st, const uint8_t* solved);
 	static uint16_t manhattan(state* st, const uint8_t* solved);
 };
 
 // Are numbers in place
-uint16_t heuristics::hamming(state* st, const uint8_t* solved) {
+uint16_t Heuristics::hamming(state* st, const uint8_t* solved) {
     uint16_t ret = 0;
     auto sti = st->first.table.begin();
     const uint8_t* soli = solved;
@@ -31,7 +31,7 @@ uint16_t heuristics::hamming(state* st, const uint8_t* solved) {
  * val 1 2 3 4 5 6 .. 15  0
  */
 // Sum distances from number to expected place
-uint16_t heuristics::manhattan(state* st, const uint8_t* solved) {
+uint16_t Heuristics::manhattan(state* st, const uint8_t* solved) {
     uint16_t ret = 0;
     auto sti = st->first.table.begin();
     const uint8_t* soli = solved;
@@ -39,13 +39,13 @@ uint16_t heuristics::manhattan(state* st, const uint8_t* solved) {
         if (*sti == 0) // Ignore 0
             continue;
         if (*sti != *soli) { // Calculate distance
-            ret += abs((*sti - 1) / board::height - (*soli - 1) / board::height);
-            ret += abs((*sti - 1) % board::width - (*soli - 1) % board::height);
+            ret += abs((*sti - 1) / Board::height - (*soli - 1) / Board::height);
+            ret += abs((*sti - 1) % Board::width - (*soli - 1) % Board::height);
         }
     }
     if (*++sti != 0) { // Treat last field in a special way
-        ret += (board::len - *sti) / board::height;
-        ret += (board::len - *sti) % board::width;
+        ret += (Board::len - *sti) / Board::height;
+        ret += (Board::len - *sti) % Board::width;
     }
     return ret;
 }

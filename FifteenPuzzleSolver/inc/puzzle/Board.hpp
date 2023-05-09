@@ -12,35 +12,35 @@ using Same = bool(*)(const uint8*, const uint8*);
 Same same = nullptr;
 
 // key of hashmap
-struct board {
+struct Board {
 
     static uint8 len, width, height;
 
     std::vector<uint8> table;
     uint8 zero_idx;
 
-    board(std::vector<uint8> newTable); // NEW
-    board(const board& other);          // COPY
+    Board(std::vector<uint8> newTable); // NEW
+    Board(const Board& other);          // COPY
 
-    bool operator==(const board& other) const;
-    board& operator=(const board& other); // trivial
+    bool operator==(const Board& other) const;
+    Board& operator=(const Board& other); // trivial
 
     static void init_same();
     std::string toString();
 };
 
-uint8 board::len;
-uint8 board::width;
-uint8 board::height;
+uint8 Board::len;
+uint8 Board::width;
+uint8 Board::height;
 
-using state = std::pair<board, op_path>;
+using state = std::pair<Board, OperationPath>;
 
 
 
 bool same_mod8(const uint8_t* solved, const uint8_t* state) {
     auto solved_ptr = (uint64_t*)solved,
         state_ptr = (uint64_t*)state;
-    uint8_t steps = board::len >> 3;
+    uint8_t steps = Board::len >> 3;
     bool retVal = true;
     for (uint8_t i = 0; i < steps; i++, solved_ptr++, state_ptr++) {
         if ((*solved_ptr ^ *state_ptr) != 0) { // 0 if same
@@ -53,7 +53,7 @@ bool same_mod8(const uint8_t* solved, const uint8_t* state) {
 bool same_mod4(const uint8_t* solved, const uint8_t* state) {
     auto solved_ptr = (uint32_t*)solved,
         state_ptr = (uint32_t*)state;
-    uint8_t steps = board::len >> 2;
+    uint8_t steps = Board::len >> 2;
     bool retVal = true;
     for (uint8_t i = 0; i < steps; i++, solved_ptr++, state_ptr++) {
         if (*solved_ptr ^ *state_ptr) {
@@ -68,7 +68,7 @@ bool same_any(const uint8_t* solved, const uint8_t* state) {
         state_ptr = state;
 
     bool retVal = true;
-    for (uint8_t i = 0; i < board::len; i++, solved_ptr++, state_ptr++) {
+    for (uint8_t i = 0; i < Board::len; i++, solved_ptr++, state_ptr++) {
         if (*solved_ptr ^ *state_ptr) {
             retVal = false;
         }
@@ -76,19 +76,19 @@ bool same_any(const uint8_t* solved, const uint8_t* state) {
     return retVal;
 }
 
-board::board(std::vector<uint8_t>  table) : table(std::move(table)) {
+Board::Board(std::vector<uint8_t>  table) : table(std::move(table)) {
     auto it = std::find(this->table.begin(), this->table.end(), 0);
     zero_idx = it - this->table.begin(); // if no zero was found zero_idx = table.length()
 }
 
-board::board(const board& o) : zero_idx(o.zero_idx), table(o.table) {}
+Board::Board(const Board& o) : zero_idx(o.zero_idx), table(o.table) {}
 
 
-void board::init_same() {
+void Board::init_same() {
 
-    if (board::len % 8 == 0) {
+    if (Board::len % 8 == 0) {
         same = &same_mod8;
-    } else if (board::len % 4 == 0) {
+    } else if (Board::len % 4 == 0) {
         same = &same_mod4;
     } else {
         same = &same_any;
@@ -97,25 +97,25 @@ void board::init_same() {
 }
 
 
-bool board::operator==(const board& other) const {
+bool Board::operator==(const Board& other) const {
     if (same == &same_mod8 || same == &same_mod4 || same == &same_any) {
         return same(this->table.data(), other.table.data());
     }
     return false;
 }
 
-board& board::operator=(const board& other) {
+Board& Board::operator=(const Board& other) {
     zero_idx = other.zero_idx;
     table = other.table;
     return *this;
 }
 
-std::string board::toString() {
+std::string Board::toString() {
     std::string ret;
-    for (int i = 0; i < board::len; i++) {
+    for (int i = 0; i < Board::len; i++) {
         ret += std::to_string(table[i]);
         ret += " ";
-        if (i % board::width == board::width - 1)
+        if (i % Board::width == Board::width - 1)
             ret += '\n';
     }
     return ret;

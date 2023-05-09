@@ -96,7 +96,7 @@ int main(int argumentsCount, char** arguments) {
     // getAverageTime(pathProgram);
     // return 0;
 
-    info_bundle info;
+    InfoBundle info;
 
     for (const auto& entry : std::filesystem::directory_iterator(pathInput)) {
         const string pathEntry = entry.path().string();

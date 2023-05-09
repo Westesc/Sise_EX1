@@ -7,8 +7,8 @@
 
 #include <iomanip>
 
-class manager {
-    info_bundle info;
+class Manager {
+    InfoBundle info;
     std::string strategy,
                 param,
                 start_state_file,
@@ -20,17 +20,17 @@ class manager {
 
 
 public:
-    manager(std::string strategy, std::string param, std::string s_file, std::string r_file, std::string ex_file);
-    manager(char** argv);
+    Manager(std::string strategy, std::string param, std::string s_file, std::string r_file, std::string ex_file);
+    Manager(char** argv);
 
     void find_solution();
 };
 
-manager::manager(char** argv) : info(), strategy(argv[1]), param(argv[2]), start_state_file(argv[3]),
+Manager::Manager(char** argv) : info(), strategy(argv[1]), param(argv[2]), start_state_file(argv[3]),
 result_file(argv[4]), extra_info_file(argv[5]) {}
 
 
-manager::manager(std::string strategy, std::string param, std::string s_file, std::string e_file, std::string ex_file) :
+Manager::Manager(std::string strategy, std::string param, std::string s_file, std::string e_file, std::string ex_file) :
     info(), strategy(std::move(strategy)), param(std::move(param)), start_state_file(std::move(s_file)),
     result_file(std::move(e_file)), extra_info_file(std::move(ex_file)) {}
 
@@ -40,7 +40,7 @@ manager::manager(std::string strategy, std::string param, std::string s_file, st
  * @param s input string
  * @return table of operators, table_len exactly 4 or nullptr
  */
-ops::operators* manager::get_order(std::string s) {
+ops::operators* Manager::get_order(std::string s) {
     if (s.size() == 4) {
         auto order = new ops::operators[4];
         for (int i = 0; i < 4; i++) {
@@ -70,7 +70,7 @@ ops::operators* manager::get_order(std::string s) {
     throw std::logic_error("incorrect operators count");
 }
 
-ops::heuristics manager::get_heuristic(std::string s) {
+ops::heuristics Manager::get_heuristic(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     if (s == "hamm") {
         return ops::hamm;
@@ -83,11 +83,11 @@ ops::heuristics manager::get_heuristic(std::string s) {
 
 
 
-void manager::find_solution() {
+void Manager::find_solution() {
     file_start_state startStateHandler(start_state_file);
     state start_state = startStateHandler.getState();
-    op_path solution;
-    strategies strats;
+    OperationPath solution;
+    Strategies strats;
 
     if (strategy == "bfs") {
         ops::operators* order = get_order(param);

@@ -3,8 +3,8 @@
 
 #include "AstarState.hpp"
 
-struct astr_compare {
-	bool operator()(const state_astr& lhs, const state_astr& rhs) {
+struct AstarCompare {
+	bool operator()(const AstarState& lhs, const AstarState& rhs) {
 		return lhs.f > rhs.f;
 	}
 };

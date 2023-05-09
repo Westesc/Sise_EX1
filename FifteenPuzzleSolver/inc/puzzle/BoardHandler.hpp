@@ -11,25 +11,25 @@
 #include <cstdint>
 #include <utility>
 
-class board_handler {
-    board_handler() = default; // static class
+class BoardHandler {
+    BoardHandler() = default; // static class
 public:
     static state* new_moved(const state& old_state, ops::operators op);
     static uint8_t* new_solved_table();
-    static void display_board(const board& b);
+    static void display_board(const Board& b);
 };
 
-uint8_t* board_handler::new_solved_table() {
-    auto solved_table = new uint8_t[board::len];
+uint8_t* BoardHandler::new_solved_table() {
+    auto solved_table = new uint8_t[Board::len];
     auto solved_cursor = solved_table;
-    for (uint8_t i = 1; i < board::len; i++, solved_cursor++) {
+    for (uint8_t i = 1; i < Board::len; i++, solved_cursor++) {
         *solved_cursor = i;
     }
     *solved_cursor = 0; // last element is 0
     return solved_table;
 }
 
-state* board_handler::new_moved(const state& old_state, ops::operators op) {
+state* BoardHandler::new_moved(const state& old_state, ops::operators op) {
     uint8_t moved_zero_idx = old_state.first.zero_idx;
     uint8_t op_int = op;
     // enum operators {L, R, U, D, None, NotFound};
@@ -39,58 +39,58 @@ state* board_handler::new_moved(const state& old_state, ops::operators op) {
         op_int += 0b100;
     switch (op_int) {
         case ops::L:
-            if (old_state.first.zero_idx % board::width == 0)
+            if (old_state.first.zero_idx % Board::width == 0)
                 return nullptr;
             if (*(old_state.second.path.end() - 1) == ops::R)
                 return nullptr;
             moved_zero_idx--;
             break;
         case ops::R:
-            if (old_state.first.zero_idx % board::width == board::width - 1)
+            if (old_state.first.zero_idx % Board::width == Board::width - 1)
                 return nullptr;
             if (*(old_state.second.path.end() - 1) == ops::L)
                 return nullptr;
             moved_zero_idx++;
             break;
         case ops::U:
-            if (old_state.first.zero_idx < board::width)
+            if (old_state.first.zero_idx < Board::width)
                 return nullptr;
             if (*(old_state.second.path.end() - 1) == ops::D)
                 return nullptr;
-            moved_zero_idx -= board::width;
+            moved_zero_idx -= Board::width;
             break;
         case ops::D:
-            if (old_state.first.zero_idx >= (board::len - board::width))
+            if (old_state.first.zero_idx >= (Board::len - Board::width))
                 return nullptr;
             if (*(old_state.second.path.end() - 1) == ops::U)
                 return nullptr;
-            moved_zero_idx += board::width;
+            moved_zero_idx += Board::width;
             break;
         case (ops::L + 4):
-            if (old_state.first.zero_idx % board::width == 0)
+            if (old_state.first.zero_idx % Board::width == 0)
                 return nullptr;
             moved_zero_idx--;
             break;
         case (ops::R + 4):
-            if (old_state.first.zero_idx % board::width == board::width - 1)
+            if (old_state.first.zero_idx % Board::width == Board::width - 1)
                 return nullptr;
             moved_zero_idx++;
             break;
         case (ops::U + 4):
-            if (old_state.first.zero_idx < board::width)
+            if (old_state.first.zero_idx < Board::width)
                 return nullptr;
-            moved_zero_idx -= board::width;
+            moved_zero_idx -= Board::width;
             break;
         case (ops::D + 4):
-            if (old_state.first.zero_idx >= (board::len - board::width))
+            if (old_state.first.zero_idx >= (Board::len - Board::width))
                 return nullptr;
-            moved_zero_idx += board::width;
+            moved_zero_idx += Board::width;
             break;
         default:
             break;
     }
-    board moved_board(old_state.first); // throws
-    op_path moved_path(old_state.second, op);
+    Board moved_board(old_state.first); // throws
+    OperationPath moved_path(old_state.second, op);
 
     uint8_t* ptr_oz = moved_board.table.data(),
         * ptr_nz = moved_board.table.data();
@@ -103,8 +103,8 @@ state* board_handler::new_moved(const state& old_state, ops::operators op) {
 }
 
 
-void board_handler::display_board(const board& b) {
-    for (int i = 0; i < board::len; i++) {
+void BoardHandler::display_board(const Board& b) {
+    for (int i = 0; i < Board::len; i++) {
         std::cout << +b.table[i] << " ";
         if (i % 4 == 3)
             std::cout << '\n';

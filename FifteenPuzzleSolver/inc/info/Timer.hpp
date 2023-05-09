@@ -7,23 +7,23 @@
 
 #include <chrono>
 
-class timer {
+class Timer {
     typedef std::chrono::high_resolution_clock clock_;
     typedef std::chrono::duration<double, std::ratio<1> > second_;
     typedef std::chrono::duration<double, std::ratio<1, 1000> > millisecond_;
     std::chrono::time_point<clock_> beg_;
 
 public:
-    timer() : beg_(clock_::now()) {}
+    Timer() : beg_(clock_::now()) {}
     void reset();
     double elapsed() const;
 };
 
-void timer::reset() {
+void Timer::reset() {
     beg_ = clock_::now();
 }
 
-double timer::elapsed() const {
+double Timer::elapsed() const {
     return std::chrono::duration_cast<millisecond_>
         (clock_::now() - beg_).count();
 }
