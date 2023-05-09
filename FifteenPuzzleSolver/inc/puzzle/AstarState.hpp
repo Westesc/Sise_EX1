@@ -7,12 +7,12 @@
 #include <utility>
 
 struct AstarState {
-	uint16_t f;
-	state s;
+	uint16 f;
+	State state;
 
-	AstarState(uint16_t f, state s) : f(f), s(std::move(s)) {}
-	AstarState(const Board& b, OperationPath p) : f(0), s(b, p) {}
-	explicit AstarState(state s) : f(0), s(std::move(s)) {}
-	AstarState(state s, uint16_t f) : f(f), s(std::move(s)) {}
-	AstarState(const AstarState& sa) : f(sa.f), s(sa.s) {}
+	AstarState(uint16_t f, State state) : f(f), state(std::move(state)) {}
+	AstarState(const Board& b, OperationPath p) : f(0), state(b, p) {}
+	explicit AstarState(State state) : f(0), state(std::move(state)) {}
+	AstarState(State state, uint16_t f) : f(f), state(std::move(state)) {}
+	AstarState(const AstarState& sa) : f(sa.f), state(sa.state) {}
 };

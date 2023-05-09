@@ -15,6 +15,7 @@ using sint32 = int32_t;
 using uint64 = uint64_t;
 using sint64 = int64_t;
 
+using size = size_t;
 
 #include <cstdint>
 #include <memory>

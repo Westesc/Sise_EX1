@@ -5,29 +5,34 @@
 #include <chrono>
 
 class InfoBundle {
+
     Timer timer;
     int maxDepth;
+
 public:
-    InfoBundle();
-    double get_time();
+
     int visited;
     int processed;
-    int get_max_depth() const;
-    void set_max_depth(int new_depth);
+
+    InfoBundle();
+    double GetTime();
+    int GetMaxDepth() const;
+    void SetMaxDepth(int new_depth);
+
 };
 
 InfoBundle::InfoBundle() : timer(), processed(0), visited(0), maxDepth(1) {}
 
-double InfoBundle::get_time() {
+double InfoBundle::GetTime() {
     double ret = timer.elapsed();
     return ret;
 }
 
-void InfoBundle::set_max_depth(int newMaxDepth) {
+void InfoBundle::SetMaxDepth(int newMaxDepth) {
     if (newMaxDepth > maxDepth)
         maxDepth = newMaxDepth;
 }
 
-int InfoBundle::get_max_depth() const {
+int InfoBundle::GetMaxDepth() const {
     return maxDepth;
 }

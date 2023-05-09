@@ -7,7 +7,6 @@
 #include "puzzle/Heuristics.hpp"
 #include "info/InfoBundle.hpp"
 #include "Strategies.hpp"
-#include "includes.h"
 
 #include <unordered_map>
 #include <queue>
@@ -19,24 +18,25 @@
 struct Strategies {
     Strategies();
     ~Strategies();
-    uint8_t* solved_table;
+    uint8* solvedTable;
 
-	static uint16_t (*heuristic)(state* st, const uint8_t* solved);
-    OperationPath bfs(state& start_state, ops::operators* order, InfoBundle& info) const;
-    OperationPath dfs(state& start_state, ops::operators* order, InfoBundle& info) const;
-    OperationPath astr(state& start_state, ops::heuristics heur, InfoBundle& info) const;
+	static uint16 (*heuristic)(State* st, const uint8* solved);
+    OperationPath bfs(State& start_state, ops::operators* order, InfoBundle& info) const;
+    OperationPath dfs(State& start_state, ops::operators* order, InfoBundle& info) const;
+    OperationPath astr(State& start_state, ops::heuristics heur, InfoBundle& info) const;
 };
 
-uint16_t(*Strategies::heuristic)(state* st, const uint8_t* solved);
-typedef std::unordered_map<Board, OperationPath, BoardHash>::const_iterator map_iterator;
+uint16 (*Strategies::heuristic)(State* st, const uint8* solved);
+
+using MapIterator = std::unordered_map<Board, OperationPath, BoardHash>::const_iterator;
 
 Strategies::Strategies() {
-    Board::init_same();
-    solved_table = BoardHandler::new_solved_table(); // to modify solved state pass different function
+    Board::InitializeSame();
+    solvedTable = BoardHandler::NewSolvedTable(); // to modify solved State pass different function
 }
 
 Strategies::~Strategies() {
-    delete[](solved_table);
+    delete[](solvedTable);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,12 +57,12 @@ Strategies::~Strategies() {
                 U.add(v)
     return failure
  */
-OperationPath Strategies::bfs(state& start_state, ops::operators* order, InfoBundle& info) const {
+OperationPath Strategies::bfs(State& start_state, ops::operators* order, InfoBundle& info) const {
     info.visited++;
 
-    std::queue<state> open_states;                        /// Q - queue
+    std::queue<State> open_states;                        /// Q - queue
     std::unordered_map<Board, OperationPath, BoardHash> processed_states; /// U - set
-    state* cur_state;   // for iteration
+    State* cur_state;   // for iteration
     open_states.push(start_state);                     /// Q.enqueue(s)
 
     while (!open_states.empty()) {                         /// while !Q.isempty():
@@ -70,13 +70,13 @@ OperationPath Strategies::bfs(state& start_state, ops::operators* order, InfoBun
         ops::operators* op = order;
         info.processed++;
         for (int i = 0; i < 4; i++, op++) {                /// for n in neighbours(v):
-            state* neighbour = BoardHandler::new_moved(*cur_state, *op); // uses new, must be deleted
+            State* neighbour = BoardHandler::NewMoved(*cur_state, *op); // uses new, must be deleted
             if (neighbour == nullptr)  // illegal move or trivial(for example RL or UD)
                 continue;
-            if (same(solved_table, neighbour->first.table.data())) { /// if n is solution:
+            if (same(solvedTable, neighbour->first.table.data())) { /// if n is solution:
                 // solution found!
                 info.visited++; //xxx not sure if right
-                info.set_max_depth((int)neighbour->second.path.size());
+                info.SetMaxDepth((int)neighbour->second.path.size());
                 OperationPath solution = neighbour->second;
                 delete neighbour;
                 return solution;							/// return success
@@ -118,24 +118,24 @@ OperationPath Strategies::bfs(state& start_state, ops::operators* order, InfoBun
                     S.push(n)
         return failure
  */
-OperationPath Strategies::dfs(state& start_state, ops::operators* order, InfoBundle& info) const {
+OperationPath Strategies::dfs(State& start_state, ops::operators* order, InfoBundle& info) const {
     info.visited++;
-    if (same(start_state.first.table.data(), solved_table))   /// if s is solution:
+    if (same(start_state.first.table.data(), solvedTable))   /// if s is solution:
         return { ops::None };										/// 	return success
-    std::stack<state> open_states;									/// S - stack
+    std::stack<State> open_states;									/// S - stack
     std::unordered_map<Board, OperationPath, BoardHash> processed_states;/// T - set
     bool isInserted;
 
     open_states.push(start_state);							/// S.push(s)
     while (!open_states.empty()) {
         info.processed++;
-        state cur_state(open_states.top());						/// v = S.pop()
+        State cur_state(open_states.top());						/// v = S.pop()
         open_states.pop();										///
         auto it = processed_states.insert(cur_state);
         isInserted = it.second;
 
         if (!isInserted) {
-            if (it.first->second.get_length() > cur_state.second.get_length()) {
+            if (it.first->second.GetLength() > cur_state.second.GetLength()) {
                 processed_states.erase(it.first); // how long does this execute?
                 processed_states.insert(cur_state);
                 isInserted = true;
@@ -144,12 +144,12 @@ OperationPath Strategies::dfs(state& start_state, ops::operators* order, InfoBun
         if (isInserted && cur_state.second.path.size() < DFS_MAX_DEPTH) {
             ops::operators* op = order + 3;
             for (int i = 0; i < 4; i++, op--) {    				/// for n in neighbours(v).reverse():
-                state* neighbour = BoardHandler::new_moved(cur_state, *op); // uses new, must be deleted
+                State* neighbour = BoardHandler::NewMoved(cur_state, *op); // uses new, must be deleted
                 if (neighbour == nullptr)  // illegal move or trivial(for example RL or UD)
                     continue;
                 info.visited++;
-                info.set_max_depth((int)neighbour->second.path.size());
-                if (same(solved_table, neighbour->first.table.data())) { /// if n is solution:
+                info.SetMaxDepth((int)neighbour->second.path.size());
+                if (same(solvedTable, neighbour->first.table.data())) { /// if n is solution:
                     OperationPath solution = neighbour->second;
                     delete neighbour;
                     return solution;						/// return success
@@ -183,15 +183,15 @@ astar(G, s):
             P.insert(n, f)
     return failure
  */
-OperationPath Strategies::astr(state& start_state, ops::heuristics heur, InfoBundle& info) const {
+OperationPath Strategies::astr(State& start_state, ops::heuristics heur, InfoBundle& info) const {
     info.visited++;
-    if (same(start_state.first.table.data(), solved_table))   	/// if s is solution:
+    if (same(start_state.first.table.data(), solvedTable))   	/// if s is solution:
         return { ops::None };											/// 	return success
 
     if (heur == ops::hamm)
-        heuristic = &Heuristics::hamming;
+        heuristic = &Heuristics::Hamming;
     else if (heur == ops::manh)
-        heuristic = &Heuristics::manhattan;
+        heuristic = &Heuristics::Manhattan;
 
     std::priority_queue<AstarState, std::vector<AstarState>, AstarCompare> open_states;	/// P - priority queue
     std::unordered_map<Board, OperationPath, BoardHash> processed_states; 	/// T - set
@@ -204,10 +204,10 @@ OperationPath Strategies::astr(state& start_state, ops::heuristics heur, InfoBun
     while (!open_states.empty()) {
         info.processed++;
         cur_state = &open_states.top(); /// v = P.pull()
-        state state_mut(cur_state->s);
+        State state_mut(cur_state->state);
         open_states.pop();
 
-        if (same(solved_table, state_mut.first.table.data())) { 	/// if n is solution:
+        if (same(solvedTable, state_mut.first.table.data())) { 	/// if n is solution:
             return state_mut.second;									/// 	return success
         }
         auto it = processed_states.insert(state_mut);
@@ -216,12 +216,12 @@ OperationPath Strategies::astr(state& start_state, ops::heuristics heur, InfoBun
         } else {
             op = order;
             for (int i = 0; i < 4; i++, op++) {                	/// for n in neighbours(v):
-                state* neighbour = BoardHandler::new_moved(state_mut, *op); // uses new, must be deleted
+                State* neighbour = BoardHandler::NewMoved(state_mut, *op); // uses new, must be deleted
                 if (neighbour == nullptr)  // illegal move or trivial(for example RL or UD)
                     continue;
-                info.set_max_depth((int)neighbour->second.path.size());
-                uint16_t f = heuristic(neighbour, solved_table)
-                    + neighbour->second.get_length();
+                info.SetMaxDepth((int)neighbour->second.path.size());
+                uint16_t f = heuristic(neighbour, solvedTable)
+                    + neighbour->second.GetLength();
                 open_states.emplace(*neighbour, f);				/// 	P.insert(n, f)
                 info.visited++;
                 delete neighbour;

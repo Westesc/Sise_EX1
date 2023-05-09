@@ -1,8 +1,6 @@
 #pragma once
 #include "../Framework.hpp"
 
-//#include "../includes.h"
-
 #include <cstdint>
 #include <string>
 #include <sstream>
@@ -12,17 +10,17 @@
 struct OperationPath {
     std::vector<ops::operators> path;
 
-//    op_path(int16_t l);
-    OperationPath(const OperationPath& old, ops::operators new_op); // create moved
-    OperationPath(ops::operators op);
+    OperationPath(const OperationPath& oldPath, ops::operators newOperators); // create moved
+    OperationPath(ops::operators newOperators);
     OperationPath() = default;
 
-	int16_t get_length();
-    std::string string() const; // called once for program, therefore returning by value
+	sint16 GetLength();
+    string GetString() const; // called once for program, therefore returning by value
 };
 
-std::string OperationPath::string() const {
+string OperationPath::GetString() const {
     std::stringstream ss;
+
     for (auto i : this->path) {
         switch (i) {
             case ops::L:
@@ -42,6 +40,7 @@ std::string OperationPath::string() const {
                 break;
         }
     }
+
     return ss.str();
 }
 
@@ -56,7 +55,7 @@ OperationPath::OperationPath(ops::operators op) : path(1) {
     path.at(0) = op;
 }
 
-int16_t OperationPath::get_length() {
+int16_t OperationPath::GetLength() {
     if (path.size() == 1) {
         if (path[0] == ops::NotFound) {
             return -1;

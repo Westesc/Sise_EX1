@@ -136,7 +136,6 @@
   <ItemGroup>
     <ClInclude Include="inc\FileStartState.hpp" />
     <ClInclude Include="inc\Framework.hpp" />
-    <ClInclude Include="inc\includes.h" />
     <ClInclude Include="inc\info\InfoBundle.hpp" />
     <ClInclude Include="inc\info\Timer.hpp" />
     <ClInclude Include="inc\Manager.hpp" />

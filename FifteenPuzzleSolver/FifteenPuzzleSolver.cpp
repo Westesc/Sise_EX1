@@ -27,8 +27,8 @@ int main(int argumentsCount, char** arguments) {
         return 1;
     }
 
-    manager manager(arguments);
-    manager.find_solution();
+    Manager manager(arguments);
+    manager.FindSolution();
 
     return 0;
 }

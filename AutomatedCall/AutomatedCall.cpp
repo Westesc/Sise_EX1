@@ -11,7 +11,7 @@ enum Algorithm : uint8 {
     ASTAR = 2
 };
 
-const auto selectedAlgorithm = Algorithm::ASTAR;
+const auto selectedAlgorithm = Algorithm::BFS;
 
 void getAverageTime (
     const string& pathProgram
@@ -40,8 +40,8 @@ void getAverageTime (
     for (int i = 0; i < length; i++) {
         std::cout << '|'; // could be buffored...
 
-        manager manager(strategy, order, pathStartFile, pathSolutionFile, pathExtraFile);
-        manager.find_solution();
+        Manager manager(strategy, order, pathStartFile, pathSolutionFile, pathExtraFile);
+        manager.FindSolution();
 
         std::ifstream extraFile (pathExtraFile);
         string buffer;
@@ -72,8 +72,8 @@ void runFifteenPuzzleSolver(
         const string fileResult = pathOutput.str() + "_sol.txt";
         const string fileExtra = pathOutput.str() + "_stats.txt";
 
-        manager manager(strategy, *params, pathEntry, fileResult, fileExtra);
-        manager.find_solution();
+        Manager manager(strategy, *params, pathEntry, fileResult, fileExtra);
+        manager.FindSolution();
     }
 }
 
@@ -133,7 +133,7 @@ int main(int argumentsCount, char** arguments) {
         }
     }
 
-    std::cout << "Elapsed Time (Execution Time): " << info.get_time() << " ms" << std::endl;
+    std::cout << "Elapsed Time (Execution Time): " << info.GetTime() << " ms" << std::endl;
 
     return 0;
 }

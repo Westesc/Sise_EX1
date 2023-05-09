@@ -23,9 +23,6 @@
     <ClInclude Include="inc\FileStartState.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="inc\includes.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="inc\Manager.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>

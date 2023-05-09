@@ -9,42 +9,31 @@
 
 class Manager {
     InfoBundle info;
-    std::string strategy,
-                param,
-                start_state_file,
-                result_file,
-                extra_info_file;
+    string strategy, params, 
+        fileStart, fileResult, fileExtra;
 
-    static ops::operators* get_order(std::string s);
-    static ops::heuristics get_heuristic(std::string s);
+    static ops::operators* GetOrder(string state);
+    static ops::heuristics GetHeuristic(string state);
 
 
 public:
-    Manager(std::string strategy, std::string param, std::string s_file, std::string r_file, std::string ex_file);
-    Manager(char** argv);
+    Manager(string strategy, string params, string s_file, string r_file, string ex_file);
+    Manager(char** arguments);
 
-    void find_solution();
+    void FindSolution();
 };
 
-Manager::Manager(char** argv) : info(), strategy(argv[1]), param(argv[2]), start_state_file(argv[3]),
-result_file(argv[4]), extra_info_file(argv[5]) {}
+Manager::Manager(char** argv) : info(), strategy(argv[1]), params(argv[2]), fileStart(argv[3]), fileResult(argv[4]), fileExtra(argv[5]) {}
 
+Manager::Manager(string strategy, string params, string s_file, string e_file, string ex_file) :
+    info(), strategy(std::move(strategy)), params(std::move(params)), fileStart(std::move(s_file)),
+    fileResult(std::move(e_file)), fileExtra(std::move(ex_file)) {}
 
-Manager::Manager(std::string strategy, std::string param, std::string s_file, std::string e_file, std::string ex_file) :
-    info(), strategy(std::move(strategy)), param(std::move(param)), start_state_file(std::move(s_file)),
-    result_file(std::move(e_file)), extra_info_file(std::move(ex_file)) {}
-
-/**
- * Creates new table that needs to be deleted.
- *
- * @param s input string
- * @return table of operators, table_len exactly 4 or nullptr
- */
-ops::operators* Manager::get_order(std::string s) {
-    if (s.size() == 4) {
+ops::operators* Manager::GetOrder(string state) {
+    if (state.size() == 4) {
         auto order = new ops::operators[4];
         for (int i = 0; i < 4; i++) {
-            switch (s[i]) {
+            switch (state[i]) {
                 case 'L':
                 case 'l':
                     order[i] = ops::L;
@@ -70,51 +59,49 @@ ops::operators* Manager::get_order(std::string s) {
     throw std::logic_error("incorrect operators count");
 }
 
-ops::heuristics Manager::get_heuristic(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-    if (s == "hamm") {
+ops::heuristics Manager::GetHeuristic(string state) {
+    std::transform(state.begin(), state.end(), state.begin(), ::tolower);
+    if (state == "hamm") {
         return ops::hamm;
     }
-    if (s == "manh") {
+    if (state == "manh") {
         return ops::manh;
     }
     return ops::error;
 }
 
-
-
-void Manager::find_solution() {
-    file_start_state startStateHandler(start_state_file);
-    state start_state = startStateHandler.getState();
+void Manager::FindSolution() {
+    FileStartState startStateHandler(fileStart);
+    State start_state = startStateHandler.GetState();
     OperationPath solution;
     Strategies strats;
 
     if (strategy == "bfs") {
-        ops::operators* order = get_order(param);
+        ops::operators* order = GetOrder(params);
         solution = strats.bfs(start_state, order, info);
         delete order; // CHAOS!!!
     } else if (strategy == "dfs") {
-        ops::operators* order = get_order(param);
+        ops::operators* order = GetOrder(params);
         solution = strats.dfs(start_state, order, info);
         delete order;
     } else if (strategy == "astr") {
-        ops::heuristics heuristic = get_heuristic(param);
+        ops::heuristics heuristic = GetHeuristic(params);
         solution = strats.astr(start_state, heuristic, info);
     }
-    double execTime = info.get_time();
+    double execTime = info.GetTime();
 
     // result file
-    std::ofstream solution_file(result_file);
-    solution_file << solution.get_length() << '\n'
-        << solution.string() << '\n';
+    std::ofstream solution_file(fileResult);
+    solution_file << solution.GetLength() << '\n'
+        << solution.GetString() << '\n';
     solution_file.close();
 
     // extra info file
-    std::ofstream info_file(extra_info_file);
-    info_file << solution.get_length() << '\n'
+    std::ofstream info_file(fileExtra);
+    info_file << solution.GetLength() << '\n'
         << info.processed << '\n'
         << info.visited << '\n'
-        << info.get_max_depth() << '\n'
+        << info.GetMaxDepth() << '\n'
         << std::setprecision(3) << std::fixed << execTime << '\n';
     info_file.close();
 }

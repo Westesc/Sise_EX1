@@ -2,35 +2,32 @@
 #include "Framework.hpp"
 
 #include "puzzle/BoardHandler.hpp"
-#include "includes.h"
 
 #include <fstream>
 #include <utility>
 
-
-
 // max rozmiar 255x255, chyba starczy
-class file_start_state {
-    std::vector<uint8_t> table;
+class FileStartState {
+    std::vector<uint8> table;
 
 public:
-    file_start_state(const std::string& file);
-    state getState();
+    FileStartState(const std::string& file);
+    State GetState();
 };
 
-file_start_state::file_start_state(const std::string& path) : table(16) {
+FileStartState::FileStartState(const std::string& path) : table(16) {
     std::ifstream file;
     file.open(path);
     if (file.is_open()) {
         file >> Board::width >> Board::height;
         Board::width -= '0';
         Board::height -= '0';
-        Board::len = Board::width * Board::height;
-        uint8_t* cursor = table.data();
+        Board::length = Board::width * Board::height;
+        uint8* cursor = table.data();
         std::string buff;
-        for (uint8_t i = 0; i < Board::len; i++, cursor++) {
+        for (uint8 i = 0; i < Board::length; i++, cursor++) {
             file >> buff;
-            *cursor = (uint8_t)stoi(buff);
+            *cursor = (uint8)stoi(buff);
         }
         file.close();
     } else {
@@ -38,8 +35,8 @@ file_start_state::file_start_state(const std::string& path) : table(16) {
     }
 }
 
-state file_start_state::getState() {
-    Board::init_same();
+State FileStartState::GetState() {
+    Board::InitializeSame();
     Board b = Board(table);
     // issue: after return is called board destructor, which deallocates table.
     OperationPath p;

@@ -9,20 +9,22 @@
 #include <cstdint>
 
 struct Heuristics {
-	static uint16_t hamming(state* st, const uint8_t* solved);
-	static uint16_t manhattan(state* st, const uint8_t* solved);
+	static uint16 Hamming(State* state, const uint8_t* solved);
+	static uint16 Manhattan(State* state, const uint8_t* solved);
 };
 
 // Are numbers in place
-uint16_t Heuristics::hamming(state* st, const uint8_t* solved) {
-    uint16_t ret = 0;
-    auto sti = st->first.table.begin();
+uint16 Heuristics::Hamming(State* state, const uint8_t* solved) {
+    uint16 ret = 0;
+    auto sti = state->first.table.begin();
     const uint8_t* soli = solved;
-    for (; sti < st->first.table.end(); sti++, soli++) {
+
+    for (; sti < state->first.table.end(); sti++, soli++) {
         if (*sti == 0) // Ignore 0
             continue;
         ret += (*sti != *soli);
     }
+
     return ret;
 }
 
@@ -31,11 +33,12 @@ uint16_t Heuristics::hamming(state* st, const uint8_t* solved) {
  * val 1 2 3 4 5 6 .. 15  0
  */
 // Sum distances from number to expected place
-uint16_t Heuristics::manhattan(state* st, const uint8_t* solved) {
-    uint16_t ret = 0;
-    auto sti = st->first.table.begin();
-    const uint8_t* soli = solved;
-    for (; sti != st->first.table.end() - 2; sti++, soli++) {
+uint16 Heuristics::Manhattan(State* state, const uint8* solved) {
+    uint16 ret = 0;
+    auto sti = state->first.table.begin();
+    const uint8* soli = solved;
+
+    for (; sti != state->first.table.end() - 2; sti++, soli++) {
         if (*sti == 0) // Ignore 0
             continue;
         if (*sti != *soli) { // Calculate distance
@@ -43,9 +46,11 @@ uint16_t Heuristics::manhattan(state* st, const uint8_t* solved) {
             ret += abs((*sti - 1) % Board::width - (*soli - 1) % Board::height);
         }
     }
+
     if (*++sti != 0) { // Treat last field in a special way
-        ret += (Board::len - *sti) / Board::height;
-        ret += (Board::len - *sti) % Board::width;
+        ret += (Board::length - *sti) / Board::height;
+        ret += (Board::length - *sti) % Board::width;
     }
+
     return ret;
 }
