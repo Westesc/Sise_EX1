@@ -9,12 +9,12 @@
 
 class Manager {
     InfoBundle info;
+    //uint8 strategy;
     string strategy, params, 
         fileStart, fileResult, fileExtra;
 
     static ops::operators* GetOrder(string state);
     static ops::heuristics GetHeuristic(string state);
-
 
 public:
     Manager(string strategy, string params, string s_file, string r_file, string ex_file);
@@ -71,37 +71,42 @@ ops::heuristics Manager::GetHeuristic(string state) {
 }
 
 void Manager::FindSolution() {
+
     FileStartState startStateHandler(fileStart);
-    State start_state = startStateHandler.GetState();
+    const State startState = startStateHandler.GetState();
     OperationPath solution;
-    Strategies strats;
+    Strategies strategies;
 
-    if (strategy == "bfs") {
+    if (strcmp(strategy.c_str(), "bfs") == 0) {
         ops::operators* order = GetOrder(params);
-        solution = strats.bfs(start_state, order, info);
-        delete order; // CHAOS!!!
-    } else if (strategy == "dfs") {
-        ops::operators* order = GetOrder(params);
-        solution = strats.dfs(start_state, order, info);
+        solution = strategies.bfs(startState, order, info);
         delete order;
-    } else if (strategy == "astr") {
+    } else if (strcmp(strategy.c_str(), "dfs") == 0) {
+        ops::operators* order = GetOrder(params);
+        solution = strategies.dfs(startState, order, info);
+        delete order;
+    } else if (strcmp(strategy.c_str(), "astr") == 0) {
         ops::heuristics heuristic = GetHeuristic(params);
-        solution = strats.astr(start_state, heuristic, info);
+        solution = strategies.astr(startState, heuristic, info);
     }
-    double execTime = info.GetTime();
 
-    // result file
-    std::ofstream solution_file(fileResult);
-    solution_file << solution.GetLength() << '\n'
-        << solution.GetString() << '\n';
-    solution_file.close();
+    const double executionTime = info.GetTime();
 
-    // extra info file
-    std::ofstream info_file(fileExtra);
-    info_file << solution.GetLength() << '\n'
-        << info.processed << '\n'
-        << info.visited << '\n'
-        << info.GetMaxDepth() << '\n'
-        << std::setprecision(3) << std::fixed << execTime << '\n';
-    info_file.close();
+    { // Result File
+        std::ofstream fileSolution(fileResult);
+        fileSolution << solution.GetLength() << '\n'
+            << solution.GetString() << '\n';
+        fileSolution.close();
+    }
+
+    { // Extra info file 
+        std::ofstream fileExtra(fileExtra);
+        fileExtra << solution.GetLength() << '\n'
+            << info.processed << '\n'
+            << info.visited << '\n'
+            << info.GetMaxDepth() << '\n'
+            << std::setprecision(3) << std::fixed << executionTime << '\n';
+        fileExtra.close();
+    }
+    
 }
