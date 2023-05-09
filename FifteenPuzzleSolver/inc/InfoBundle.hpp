@@ -1,7 +1,7 @@
 #pragma once
-#include "../Framework.hpp"
+#include "Framework.hpp"
 
-#include "Timer.hpp"
+#include "util/Timer.hpp"
 #include <chrono>
 
 class InfoBundle {
@@ -28,7 +28,9 @@ double InfoBundle::GetTime() {
     return ret;
 }
 
-void InfoBundle::SetMaxDepth(int newMaxDepth) {
+void InfoBundle::SetMaxDepth(
+    int newMaxDepth
+) {
     if (newMaxDepth > maxDepth)
         maxDepth = newMaxDepth;
 }

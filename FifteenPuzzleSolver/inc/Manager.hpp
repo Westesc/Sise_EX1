@@ -1,9 +1,9 @@
 #pragma once
 #include "Framework.hpp"
 
-#include "info/InfoBundle.hpp"
 #include "FileStartState.hpp"
 #include "Strategies.hpp"
+#include "InfoBundle.hpp"
 
 #include <iomanip>
 
@@ -13,11 +13,11 @@ class Manager {
     string strategy, params, 
         fileStart, fileResult, fileExtra;
 
-    static ops::operators* GetOrder(string state);
-    static ops::heuristics GetHeuristic(string state);
+    static Varieties::Operators* GetOrder(string state);
+    static Varieties::Heuristics GetHeuristic(string state);
 
 public:
-    Manager(string strategy, string params, string s_file, string r_file, string ex_file);
+    Manager(string newStrategy, string newParams, string newFileStart, string newFileResult, string newFileExtra);
     Manager(char** arguments);
 
     void FindSolution();
@@ -25,30 +25,32 @@ public:
 
 Manager::Manager(char** argv) : info(), strategy(argv[1]), params(argv[2]), fileStart(argv[3]), fileResult(argv[4]), fileExtra(argv[5]) {}
 
-Manager::Manager(string strategy, string params, string s_file, string e_file, string ex_file) :
-    info(), strategy(std::move(strategy)), params(std::move(params)), fileStart(std::move(s_file)),
-    fileResult(std::move(e_file)), fileExtra(std::move(ex_file)) {}
+Manager::Manager(string newStrategy, string newParams, string newFileStart, string newFileResult, string newFileExtra) :
+    info(), strategy(std::move(newStrategy)), params(std::move(newParams)), fileStart(std::move(newFileStart)),
+    fileResult(std::move(newFileResult)), fileExtra(std::move(newFileExtra)) {}
 
-ops::operators* Manager::GetOrder(string state) {
+Varieties::Operators* Manager::GetOrder(
+    string state
+) {
     if (state.size() == 4) {
-        auto order = new ops::operators[4];
+        auto order = new Varieties::Operators[4];
         for (int i = 0; i < 4; i++) {
             switch (state[i]) {
                 case 'L':
                 case 'l':
-                    order[i] = ops::L;
+                    order[i] = Varieties::L;
                     break;
                 case 'R':
                 case 'r':
-                    order[i] = ops::R;
+                    order[i] = Varieties::R;
                     break;
                 case 'U':
                 case 'u':
-                    order[i] = ops::U;
+                    order[i] = Varieties::U;
                     break;
                 case 'D':
                 case 'd':
-                    order[i] = ops::D;
+                    order[i] = Varieties::D;
                     break;
                 default:
                     throw std::logic_error("illegal operators, must be permutation of L, R, U, D");
@@ -59,15 +61,17 @@ ops::operators* Manager::GetOrder(string state) {
     throw std::logic_error("incorrect operators count");
 }
 
-ops::heuristics Manager::GetHeuristic(string state) {
+Varieties::Heuristics Manager::GetHeuristic(
+    string state
+) {
     std::transform(state.begin(), state.end(), state.begin(), ::tolower);
     if (state == "hamm") {
-        return ops::hamm;
+        return Varieties::hamm;
     }
     if (state == "manh") {
-        return ops::manh;
+        return Varieties::manh;
     }
-    return ops::error;
+    return Varieties::error;
 }
 
 void Manager::FindSolution() {
@@ -78,15 +82,15 @@ void Manager::FindSolution() {
     Strategies strategies;
 
     if (strcmp(strategy.c_str(), "bfs") == 0) {
-        ops::operators* order = GetOrder(params);
+        Varieties::Operators* order = GetOrder(params);
         solution = strategies.bfs(startState, order, info);
         delete order;
     } else if (strcmp(strategy.c_str(), "dfs") == 0) {
-        ops::operators* order = GetOrder(params);
+        Varieties::Operators* order = GetOrder(params);
         solution = strategies.dfs(startState, order, info);
         delete order;
     } else if (strcmp(strategy.c_str(), "astr") == 0) {
-        ops::heuristics heuristic = GetHeuristic(params);
+        Varieties::Heuristics heuristic = GetHeuristic(params);
         solution = strategies.astr(startState, heuristic, info);
     }
 
@@ -100,13 +104,13 @@ void Manager::FindSolution() {
     }
 
     { // Extra info file 
-        std::ofstream fileExtra(fileExtra);
-        fileExtra << solution.GetLength() << '\n'
+        std::ofstream fileInfoExtra(fileExtra);
+        fileInfoExtra << solution.GetLength() << '\n'
             << info.processed << '\n'
             << info.visited << '\n'
             << info.GetMaxDepth() << '\n'
             << std::setprecision(3) << std::fixed << executionTime << '\n';
-        fileExtra.close();
+        fileInfoExtra.close();
     }
     
 }

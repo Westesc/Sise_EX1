@@ -15,10 +15,15 @@ public:
     State GetState();
 };
 
-FileStartState::FileStartState(const std::string& path) : table(16) {
+FileStartState::FileStartState(
+    const std::string& path
+) : table(16) {
+
     std::ifstream file;
     file.open(path);
+
     if (file.is_open()) {
+
         file >> Board::width >> Board::height;
         Board::width -= '0';
         Board::height -= '0';
@@ -30,15 +35,17 @@ FileStartState::FileStartState(const std::string& path) : table(16) {
             *cursor = (uint8)stoi(buff);
         }
         file.close();
+
     } else {
-        std::cout << "cannot open file\n";
+        std::cout << "FileStartState: Unable to open file!\n";
     }
+
 }
 
 State FileStartState::GetState() {
     Board::InitializeSame();
-    Board b = Board(table);
-    // issue: after return is called board destructor, which deallocates table.
-    OperationPath p;
-    return { b, p };
+    Board board = Board(table);
+    OperationPath operationPath {};
+
+    return { board, operationPath };
 }

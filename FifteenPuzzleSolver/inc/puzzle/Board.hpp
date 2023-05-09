@@ -37,7 +37,10 @@ using State = std::pair<Board, OperationPath>;
 
 
 
-bool SameMod8(const uint8* solved, const uint8* State) {
+bool SameMod8(
+    const uint8* solved,
+    const uint8* State
+) {
     auto solved_ptr = (uint64*)solved,
         state_ptr = (uint64*)State;
     uint8 steps = Board::length >> 3;
@@ -50,7 +53,10 @@ bool SameMod8(const uint8* solved, const uint8* State) {
     return retVal;
 }
 
-bool SameMod4(const uint8* solved, const uint8* State) {
+bool SameMod4(
+    const uint8* solved, 
+    const uint8* State
+) {
     auto solved_ptr = (uint32*)solved,
         state_ptr = (uint32*)State;
     uint8_t steps = Board::length >> 2;
@@ -63,7 +69,10 @@ bool SameMod4(const uint8* solved, const uint8* State) {
     return retVal;
 }
 
-bool SameAny(const uint8* solved, const uint8* State) {
+bool SameAny(
+    const uint8* solved, 
+    const uint8* State
+) {
     auto solved_ptr = solved,
         state_ptr = State;
 
@@ -76,9 +85,13 @@ bool SameAny(const uint8* solved, const uint8* State) {
     return retVal;
 }
 
-Board::Board(std::vector<uint8>  table) : table(std::move(table)) {
+Board::Board(
+    std::vector<uint8>  table
+) : table(std::move(table)) {
+
     auto it = std::find(this->table.begin(), this->table.end(), 0);
-    zeroIndex = it - this->table.begin(); // if no zero was found zero_idx = table.length()
+    zeroIndex = it - this->table.begin();                                   // If no zero was found zeroIndex = table.length() !
+
 }
 
 Board::Board(const Board& o) : zeroIndex(o.zeroIndex), table(o.table) {}

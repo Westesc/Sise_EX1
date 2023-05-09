@@ -29,13 +29,13 @@
     <ClInclude Include="inc\Strategies.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="inc\info\InfoBundle.hpp">
+    <ClInclude Include="inc\InfoBundle.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="inc\info\Timer.hpp">
+    <ClInclude Include="inc\util\Timer.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="inc\puzzle\AstarCompare.hpp">
+    <ClInclude Include="inc\puzzle\Astar\Compare.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="inc\puzzle\Board.hpp">
@@ -53,7 +53,7 @@
     <ClInclude Include="inc\puzzle\OperationPath.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="inc\puzzle\AstarState.hpp">
+    <ClInclude Include="inc\puzzle\Astar\State.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="inc\Framework.hpp">

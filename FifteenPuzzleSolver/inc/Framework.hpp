@@ -22,18 +22,20 @@ using size = size_t;
 #include <unordered_map>
 #include <utility>
 
-// todo: rename this namespace
-namespace ops {
-	enum operators : int8_t {
+namespace Varieties {
+
+	enum Operators : sint8 {
 		L = 0b00,
 		R = 0b01,
 		U = 0b10,
 		D = 0b11,
 		None = 0b1000, NotFound = 0b1001
 	};
-	enum heuristics {
+
+	enum Heuristics {
 		hamm,
 		manh,
 		error
 	};
+
 }

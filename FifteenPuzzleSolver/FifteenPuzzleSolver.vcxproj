@@ -136,16 +136,16 @@
   <ItemGroup>
     <ClInclude Include="inc\FileStartState.hpp" />
     <ClInclude Include="inc\Framework.hpp" />
-    <ClInclude Include="inc\info\InfoBundle.hpp" />
-    <ClInclude Include="inc\info\Timer.hpp" />
+    <ClInclude Include="inc\InfoBundle.hpp" />
+    <ClInclude Include="inc\util\Timer.hpp" />
     <ClInclude Include="inc\Manager.hpp" />
-    <ClInclude Include="inc\puzzle\AstarCompare.hpp" />
+    <ClInclude Include="inc\puzzle\Astar\Compare.hpp" />
     <ClInclude Include="inc\puzzle\Board.hpp" />
     <ClInclude Include="inc\puzzle\BoardHandler.hpp" />
     <ClInclude Include="inc\puzzle\BoardHash.hpp" />
     <ClInclude Include="inc\puzzle\Heuristics.hpp" />
     <ClInclude Include="inc\puzzle\OperationPath.hpp" />
-    <ClInclude Include="inc\puzzle\AstarState.hpp" />
+    <ClInclude Include="inc\puzzle\Astar\State.hpp" />
     <ClInclude Include="inc\Strategies.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -8,10 +8,10 @@
 
 // value of hashmap
 struct OperationPath {
-    std::vector<ops::operators> path;
+    std::vector<Varieties::Operators> path;
 
-    OperationPath(const OperationPath& oldPath, ops::operators newOperators); // create moved
-    OperationPath(ops::operators newOperators);
+    OperationPath(const OperationPath& oldPath, Varieties::Operators newOperators); // create moved
+    OperationPath(Varieties::Operators newOperators);
     OperationPath() = default;
 
 	sint16 GetLength();
@@ -23,16 +23,16 @@ string OperationPath::GetString() const {
 
     for (auto i : this->path) {
         switch (i) {
-            case ops::L:
+            case Varieties::L:
                 ss << "L";
                 break;
-            case ops::R:
+            case Varieties::R:
                 ss << "R";
                 break;
-            case ops::D:
+            case Varieties::D:
                 ss << "D";
                 break;
-            case ops::U:
+            case Varieties::U:
                 ss << "U";
                 break;
             default:
@@ -44,23 +44,28 @@ string OperationPath::GetString() const {
     return ss.str();
 }
 
-OperationPath::OperationPath(const OperationPath& old, ops::operators new_op) : path(old.path.size() + 1) {
-    if (!old.path.empty()) {
-        std::copy(old.path.begin(), old.path.end(), path.begin());
-    }
-    *(path.end() - 1) = new_op;
+OperationPath::OperationPath(
+    const OperationPath& oldOperationPath, 
+    Varieties::Operators newOperators
+) : path(oldOperationPath.path.size() + 1) {
+
+    if (!oldOperationPath.path.empty())
+        std::copy(oldOperationPath.path.begin(), oldOperationPath.path.end(), path.begin());
+    *(path.end() - 1) = newOperators;
 }
 
-OperationPath::OperationPath(ops::operators op) : path(1) {
-    path.at(0) = op;
+OperationPath::OperationPath(
+    Varieties::Operators newOperators
+) : path(1) {
+    path.at(0) = newOperators;
 }
 
 int16_t OperationPath::GetLength() {
     if (path.size() == 1) {
-        if (path[0] == ops::NotFound) {
+        if (path[0] == Varieties::NotFound) {
             return -1;
         }
-        if (path[0] == ops::None) {
+        if (path[0] == Varieties::None) {
             return 0;
         }
     }

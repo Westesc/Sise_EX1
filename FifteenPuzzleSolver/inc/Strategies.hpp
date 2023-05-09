@@ -2,11 +2,10 @@
 #include "Framework.hpp"
 
 #include "puzzle/BoardHandler.hpp"
-#include "puzzle/AstarCompare.hpp"
-#include "puzzle/AstarState.hpp"
+#include "puzzle/Astar/Compare.hpp"
+#include "puzzle/Astar/State.hpp"
 #include "puzzle/Heuristics.hpp"
-#include "info/InfoBundle.hpp"
-#include "Strategies.hpp"
+#include "InfoBundle.hpp"
 
 #include <unordered_map>
 #include <queue>
@@ -21,9 +20,9 @@ struct Strategies {
     uint8* solvedTable;
 
 	static uint16 (*heuristic)(State* st, const uint8* solved);
-    OperationPath bfs(const State& start_state, ops::operators* order, InfoBundle& info) const;
-    OperationPath dfs(const State& start_state, ops::operators* order, InfoBundle& info) const;
-    OperationPath astr(const State& start_state, ops::heuristics heur, InfoBundle& info) const;
+    OperationPath bfs(const State& start_state, Varieties::Operators* order, InfoBundle& info) const;
+    OperationPath dfs(const State& start_state, Varieties::Operators* order, InfoBundle& info) const;
+    OperationPath astr(const State& start_state, Varieties::Heuristics heur, InfoBundle& info) const;
 };
 
 uint16 (*Strategies::heuristic)(State* st, const uint8* solved);
@@ -59,7 +58,7 @@ Strategies::~Strategies() {
  */
 OperationPath Strategies::bfs(
     const State& startState, 
-    ops::operators* order, 
+    Varieties::Operators* order, 
     InfoBundle& infoBundle
 ) const {
 
@@ -72,7 +71,7 @@ OperationPath Strategies::bfs(
 
     while (!openStates.empty()) {                                           /// while !Q.isempty():
         currentState = &openStates.front();                                    /// 	v = Q.dequeue()
-        ops::operators* op = order;
+        Varieties::Operators* op = order;
         infoBundle.processed++;
         for (int i = 0; i < 4; i++, op++) {                                 /// for n in neighbours(v):
             State* neighbour = BoardHandler::NewMoved(*currentState, *op);     // uses new, must be deleted
@@ -106,7 +105,7 @@ OperationPath Strategies::bfs(
         }
         openStates.pop();
     }
-    return { ops::NotFound }; // will display size of -1
+    return { Varieties::NotFound }; // will display size of -1
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,14 +130,14 @@ OperationPath Strategies::bfs(
  */
 OperationPath Strategies::dfs(
     const State& startState, 
-    ops::operators* order, 
+    Varieties::Operators* order, 
     InfoBundle& infoBundle
 ) const {
 
     infoBundle.visited++;
 
     if (same(startState.first.table.data(), solvedTable))                   /// if s is solution:
-        return { ops::None };										        /// 	return success
+        return { Varieties::None };										        /// 	return success
 
     std::stack<State> openStates;									        /// S - stack
     std::unordered_map<Board, OperationPath, BoardHash> processedStates;   /// T - set
@@ -162,10 +161,10 @@ OperationPath Strategies::dfs(
         }
 
         if (isInserted && currentState.second.path.size() < DFS_MAX_DEPTH) {
-            ops::operators* operators = order + 3;
+            Varieties::Operators* Operators = order + 3;
 
-            for (int i = 0; i < 4; i++, operators--) {    				            /// for n in neighbours(v).reverse():
-                State* neighbour = BoardHandler::NewMoved(currentState, *operators);  // uses new, must be deleted
+            for (int i = 0; i < 4; i++, Operators--) {    				            /// for n in neighbours(v).reverse():
+                State* neighbour = BoardHandler::NewMoved(currentState, *Operators);  // uses new, must be deleted
 
                 if (neighbour == nullptr)                                   // illegal move or trivial(for example RL or UD)
                     continue;
@@ -185,7 +184,7 @@ OperationPath Strategies::dfs(
 
         }
     }
-    return { ops::NotFound }; /// return failure
+    return { Varieties::NotFound }; /// return failure
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,25 +209,25 @@ astar(G, s):
  */
 OperationPath Strategies::astr(
     const State& startState, 
-    ops::heuristics heuristics, 
+    Varieties::Heuristics Heuristics, 
     InfoBundle& infoBundle
 ) const {
     infoBundle.visited++;
 
     if (same(startState.first.table.data(), solvedTable))   	                        /// if s is solution:
-        return { ops::None };											                /// 	return success
+        return { Varieties::None };											                /// 	return success
 
-    if (heuristics == ops::hamm)
+    if (Heuristics == Varieties::hamm)
         heuristic = &Heuristics::Hamming;
-    else if (heuristics == ops::manh)
+    else if (Heuristics == Varieties::manh)
         heuristic = &Heuristics::Manhattan;
 
     std::priority_queue<AstarState, std::vector<AstarState>, AstarCompare> openStates;	/// P - priority queue
     std::unordered_map<Board, OperationPath, BoardHash> processedStates; 	            /// T - set
-    ops::operators order[] = { ops::L, ops::R, ops::U, ops::D };
+    Varieties::Operators order[] = { Varieties::L, Varieties::R, Varieties::U, Varieties::D };
 
     const AstarState* currentState;
-    ops::operators* operators;
+    Varieties::Operators* Operators;
 
     openStates.emplace(startState, 0);                                                  /// P.insert(s, 0)
 
@@ -246,9 +245,9 @@ OperationPath Strategies::astr(
         if (!it.second) { 	                                                            /// if T.has(v):
                                                                                         /// 	continue
         } else {
-            operators = order;
-            for (int i = 0; i < 4; i++, operators++) {                	                /// for n in neighbours(v):
-                State* neighbour = BoardHandler::NewMoved(stateMut, *operators);        // uses new, must be deleted
+            Operators = order;
+            for (int i = 0; i < 4; i++, Operators++) {                	                /// for n in neighbours(v):
+                State* neighbour = BoardHandler::NewMoved(stateMut, *Operators);        // uses new, must be deleted
 
                 if (neighbour == nullptr)                                               // illegal move or trivial(for example RL or UD)
                     continue;
@@ -266,5 +265,5 @@ OperationPath Strategies::astr(
         }
 
     }
-    return { ops::NotFound }; /// return failure
+    return { Varieties::NotFound }; /// return failure
 }
