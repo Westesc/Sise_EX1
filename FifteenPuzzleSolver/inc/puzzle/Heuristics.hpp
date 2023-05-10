@@ -34,7 +34,7 @@ uint16 Heuristics::Hamming(
  * idx 0 1 2 3 4 5 .. 14 15
  * val 1 2 3 4 5 6 .. 15  0
  */
-// Sum distances from number to expected place
+// Sums distances from number to expected place
 uint16 Heuristics::Manhattan(
     State* state,
     const uint8* solved

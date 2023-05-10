@@ -48,19 +48,20 @@ OperationPath dfs(
         auto it = processedStates.insert(currentState);
         isInserted = it.second;
 
-        if (!isInserted) {
+        if (!isInserted) { // Jeœli nie dodaliœmy stanu bo siê powtórzy³
             if (it.first->second.GetLength() > currentState.second.GetLength()) {
-                processedStates.erase(it.first); // how long does this execute?
-                processedStates.insert(currentState);
+                processedStates.erase(it.first); // Usuwamy go.
+                processedStates.insert(currentState); // Wprowadzamy go na nowo.
                 isInserted = true;
             }
         }
 
+        // Kontrolujemy g³êbokoœæ aka "LUDRU" = 5.
         if (isInserted && currentState.second.path.size() < dfsMaxDepth) {
-            Varieties::Operators* Operators = order + 3;
+            Varieties::Operators* operators = order + 3; // reverse !!!
 
-            for (int i = 0; i < 4; i++, Operators--) {    				                    /// for n in neighbours(v).reverse():
-                State* neighbour = BoardHandler::NewMoved(currentState, *Operators);        // uses new, must be deleted
+            for (int i = 0; i < 4; i++, operators--) {    				                    /// for n in neighbours(v).reverse():
+                State* neighbour = BoardHandler::NewMoved(currentState, *operators);        // uses new, must be deleted
 
                 if (neighbour == nullptr)                                                   // illegal move or trivial(for example RL or UD)
                     continue;
