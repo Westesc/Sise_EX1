@@ -30,26 +30,29 @@ uint8* BoardHandler::NewSolvedTable() {
 }
 
 State* BoardHandler::NewMoved(
-    const State& oldState, 
-    Varieties::Operators Operators
+    const State& oldState,               // board state
+    Varieties::Operators presentOperator // direction
 ) {
-    uint8 movedZeroIndex = oldState.first.zeroIndex;
-    uint8 operatorsInt = Operators;
+    uint8 movedZeroIndex = oldState.first.zeroIndex;    // simply accessing present position of so called '0'. 
+    uint8 operatorInt = presentOperator;
 
-    if (oldState.second.path.empty())
-        operatorsInt += 0b100;
+    if (oldState.second.path.empty()) // jeœli œcie¿ka dzia³añ nasze "LRUD..." jest pusta inaczej mówi¹c 1 ruch.
+        operatorInt += 0b100;
 
-    switch (operatorsInt) {
+    switch (operatorInt) {
 
         case Varieties::L: {
+            // Nie wyjœæ poza board.
             if (oldState.first.zeroIndex % Board::width == 0)
                 return nullptr;
+            // Last move Right ? - we can't go back ! 
             if (*(oldState.second.path.end() - 1) == Varieties::R)
                 return nullptr;
             movedZeroIndex--;
         } break;
 
         case Varieties::R: {
+            // Nie wyjœæ poza board.
             if (oldState.first.zeroIndex % Board::width == Board::width - 1)
                 return nullptr;
             if (*(oldState.second.path.end() - 1) == Varieties::L)
@@ -58,6 +61,7 @@ State* BoardHandler::NewMoved(
         } break;
 
         case Varieties::U: {
+            // Nie wyjœæ poza board.
             if (oldState.first.zeroIndex < Board::width)
                 return nullptr;
             if (*(oldState.second.path.end() - 1) == Varieties::D)
@@ -66,6 +70,7 @@ State* BoardHandler::NewMoved(
         } break;
 
         case Varieties::D: {
+            // Nie wyjœæ poza board.
             if (oldState.first.zeroIndex >= (Board::length - Board::width))
                 return nullptr;
             if (*(oldState.second.path.end() - 1) == Varieties::U)
@@ -102,29 +107,29 @@ State* BoardHandler::NewMoved(
             break;
     }
 
-    Board boardMoved(oldState.first); // throws
-    OperationPath pathMoved(oldState.second, Operators);
+    Board boardMoved(oldState.first);   // previous board cpy
+    OperationPath pathMoved(oldState.second, presentOperator); // emplace used direction
 
-    uint8* oldZeroPtr = boardMoved.table.data(),
+    uint8* oldZeroPtr = boardMoved.table.data(), // point to first element in board
         * newZeroPtr = boardMoved.table.data();
 
-    oldZeroPtr += oldState.first.zeroIndex;
-    newZeroPtr += movedZeroIndex;
+    oldZeroPtr += oldState.first.zeroIndex; // make it point at old '0' position
+    newZeroPtr += movedZeroIndex; // make it point at new '0' position
 
-    *oldZeroPtr = *newZeroPtr;
+    *oldZeroPtr = *newZeroPtr; // swap their values. 0 <-> newPos
     *newZeroPtr = 0;
 
-    boardMoved.zeroIndex = movedZeroIndex;
+    boardMoved.zeroIndex = movedZeroIndex; // but update '0' position and then retrive state !
 
     return new State(boardMoved, pathMoved);
 }
 
 
 void BoardHandler::DisplayBoard(
-    const Board& b
+    const Board& board
 ) {
     for (int i = 0; i < Board::length; i++) {
-        std::cout << +b.table[i] << " ";
+        std::cout << +board.table[i] << " ";
         if (i % 4 == 3)
             std::cout << '\n';
     }

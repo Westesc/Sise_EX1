@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HOW IT WORKS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// bfs wer 3:
+// bfs ver 3:
 //  s - stan pocz¹tkowy
 //  if s is solution:
 //      return success
@@ -37,16 +37,16 @@ OperationPath bfs(
 
     while (!openStates.empty()) {                                               /// while !Q.isempty():
         currentState = &openStates.front();                                     /// 	v = Q.dequeue()
-        Varieties::Operators* op = order;
+        Varieties::Operators* presentOperator = order;
         infoBundle.processed++;
-        for (int i = 0; i < 4; i++, op++) {                                     /// for n in neighbours(v):
-            State* neighbour = BoardHandler::NewMoved(*currentState, *op);      // uses new, must be deleted
+        for (int i = 0; i < 4; i++, presentOperator++) {                                     /// for n in neighbours(v):
+            State* neighbour = BoardHandler::NewMoved(*currentState, *presentOperator);      // uses new, must be deleted
 
             if (neighbour == nullptr)                                           // illegal move or trivial(for example RL or UD)
                 continue;
 
             if (same(solvedTable, neighbour->first.table.data(), Board::length)) {  /// if n is solution:
-                // solution found!
+                // Solution Found !
                 infoBundle.visited++;
                 infoBundle.SetMaxDepth((int)neighbour->second.path.size());
                 OperationPath solution = neighbour->second;
@@ -57,12 +57,12 @@ OperationPath bfs(
             /// if !U.has(n):
             ///     Q.enqueue(n)
             ///     U.add(v)
-            auto it = processedStates.insert(*neighbour);
+            auto result = processedStates.insert(*neighbour); // insert - Inserts element(s) into the container, if the container doesn't already contain an element with an equivalent key.
 
-            // it.second informs whether insertion was successful
+            // result.second informs whether insertion was successful
             // processed_states.insert returns std::pair<iterator, bool>
 
-            if (it.second) {
+            if (result.second) {
                 openStates.push(*neighbour); // copy is created
                 infoBundle.visited++;
             }

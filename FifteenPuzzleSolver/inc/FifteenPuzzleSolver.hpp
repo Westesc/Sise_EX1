@@ -80,7 +80,6 @@ void FifteenPuzzleSolver::FindSolution() {
     FileStartState startStateHandler(fileStart);
     const State startState = startStateHandler.GetState();
     OperationPath solution;
-    //Strategies strategies;
 
     if (strcmp(strategy.c_str(), "bfs") == 0) {
         Varieties::Operators* order = GetOrder(params);
