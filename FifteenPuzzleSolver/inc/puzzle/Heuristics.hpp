@@ -18,13 +18,13 @@ uint16 Heuristics::Hamming(
 ) {
     uint16 result = 0;
 
-    auto sti = state->first.table.begin();
-    const uint8* soli = solved;
+    auto iterator = state->first.table.begin();
+    const uint8* iteratorSolved = solved;
 
-    for (; sti < state->first.table.end(); sti++, soli++) {
-        if (*sti == 0) // Ignore 0
+    for (; iterator < state->first.table.end(); iterator++, iteratorSolved++) {
+        if (*iterator == 0) // Ignore 0
             continue;
-        result += (*sti != *soli);
+        result += (*iterator != *iteratorSolved);
     }
 
     return result;
@@ -41,24 +41,24 @@ uint16 Heuristics::Manhattan(
 ) {
     uint16 result = 0;
 
-    auto sti = state->first.table.begin();
-    const uint8* soli = solved;
+    auto iterator = state->first.table.begin();
+    const uint8* iteratorSolved = solved;
 
-    for (; sti != state->first.table.end() - 2; sti++, soli++) {
+    for (; iterator != state->first.table.end() - 2; iterator++, iteratorSolved++) {
 
-        if (*sti == 0) // Ignore 0
+        if (*iterator == 0) // Ignore 0
             continue;
 
-        if (*sti != *soli) { // Calculate distance
-            result += abs((*sti - 1) / Board::height - (*soli - 1) / Board::height);
-            result += abs((*sti - 1) % Board::width - (*soli - 1) % Board::height);
+        if (*iterator != *iteratorSolved) { // Calculate distance
+            result += abs((*iterator - 1) / Board::height - (*iteratorSolved - 1) / Board::height);
+            result += abs((*iterator - 1) % Board::width - (*iteratorSolved - 1) % Board::height);
         }
 
     }
 
-    if (*++sti != 0) { // Treat last field in a special way
-        result += (Board::length - *sti) / Board::height;
-        result += (Board::length - *sti) % Board::width;
+    if (*++iterator != 0) { // Treat last field in a special way
+        result += (Board::length - *iterator) / Board::height;
+        result += (Board::length - *iterator) % Board::width;
     }
 
     return result;

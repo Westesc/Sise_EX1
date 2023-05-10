@@ -9,49 +9,7 @@ enum Algorithm : uint8 {
     ASTAR = 2
 };
 
-const auto selectedAlgorithm = Algorithm::BFS;
-
-//void getAverageTime (
-//    const string& pathProgram
-//) {
-//
-//    const string rpathStartState    (R"(data\output\other\start_state_15.txt)");    // why 15?
-//    const string rpathSolution      (R"(data\output\other\solution_15.txt)");
-//    const string rpathExtraInfo     (R"(data\output\other\extra_info_15.txt)");
-//
-//    const string strategy   ("bfs");
-//    const string order      ("lrud");
-//
-//    string pathStartFile = pathProgram + rpathStartState;
-//    string pathSolutionFile = pathProgram + rpathSolution;
-//    string pathExtraFile = pathProgram + rpathExtraInfo;
-//
-//    // Writting a lot of '-' dashes i guess...
-//    const int length = 100;
-//    string temp = "";
-//    for  (int i = 0; i < length; i++) {
-//        temp += '-';
-//    }
-//    std::cout << temp + '\n';
-//
-//    double total = 0;
-//    for (int i = 0; i < length; i++) {
-//        std::cout << '|'; // could be buffored...
-//
-//        FifteenPuzzleSolver fifteenPuzzleSolver(strategy, order, pathStartFile, pathSolutionFile, pathExtraFile);
-//        fifteenPuzzleSolver.FindSolution();
-//
-//        std::ifstream extraFile (pathExtraFile);
-//        string buffer;
-//
-//        for (int j = 0; j < 5; j++)
-//            extraFile >> buffer;
-//
-//        total += stod(buffer);
-//    }
-//
-//    std::cout << "\naverage: " << (total / (double)length) << '\n';
-//}
+const auto selectedAlgorithm = Algorithm::ASTAR;
 
 void runFifteenPuzzleSolver(
     const string pathProgram,
