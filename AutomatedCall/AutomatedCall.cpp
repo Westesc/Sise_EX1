@@ -9,7 +9,7 @@ enum Algorithm : uint8 {
     ASTAR = 2
 };
 
-const auto selectedAlgorithm = Algorithm::DFS;
+const auto selectedAlgorithm = Algorithm::BFS;
 
 //void getAverageTime (
 //    const string& pathProgram

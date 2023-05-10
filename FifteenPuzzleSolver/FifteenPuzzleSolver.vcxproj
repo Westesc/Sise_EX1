@@ -138,6 +138,10 @@
     <ClInclude Include="inc\Framework.hpp" />
     <ClInclude Include="inc\InfoBundle.hpp" />
     <ClInclude Include="inc\puzzle\IsSame.hpp" />
+    <ClInclude Include="inc\strategies\Bfs.hpp" />
+    <ClInclude Include="inc\strategies\Astar.hpp" />
+    <ClInclude Include="inc\strategies\Dfs.hpp" />
+    <ClInclude Include="inc\strategies\Shared.hpp" />
     <ClInclude Include="inc\util\Timer.hpp" />
     <ClInclude Include="inc\FifteenPuzzleSolver.hpp" />
     <ClInclude Include="inc\puzzle\astar\Compare.hpp" />
@@ -147,7 +151,6 @@
     <ClInclude Include="inc\puzzle\Heuristics.hpp" />
     <ClInclude Include="inc\puzzle\OperationPath.hpp" />
     <ClInclude Include="inc\puzzle\astar\State.hpp" />
-    <ClInclude Include="inc\Strategies.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

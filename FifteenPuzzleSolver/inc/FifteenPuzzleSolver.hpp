@@ -2,14 +2,15 @@
 #include "Framework.hpp"
 
 #include "FileStartState.hpp"
-#include "Strategies.hpp"
 #include "InfoBundle.hpp"
+#include "strategies/Astar.hpp"
+#include "strategies/Bfs.hpp"
+#include "strategies/Dfs.hpp"
 
 #include <iomanip>
 
 class FifteenPuzzleSolver {
     InfoBundle info;
-    //uint8 strategy;
     string strategy, params, 
         fileStart, fileResult, fileExtra;
 
@@ -79,19 +80,39 @@ void FifteenPuzzleSolver::FindSolution() {
     FileStartState startStateHandler(fileStart);
     const State startState = startStateHandler.GetState();
     OperationPath solution;
-    Strategies strategies;
+    //Strategies strategies;
 
     if (strcmp(strategy.c_str(), "bfs") == 0) {
         Varieties::Operators* order = GetOrder(params);
-        solution = strategies.bfs(startState, order, info);
+
+        Board::InitializeSame();
+        solvedTable = BoardHandler::NewSolvedTable();
+
+        solution = bfs(startState, order, info);
+
+        delete[] solvedTable;
         delete order;
+
     } else if (strcmp(strategy.c_str(), "dfs") == 0) {
         Varieties::Operators* order = GetOrder(params);
-        solution = strategies.dfs(startState, order, info);
+
+        Board::InitializeSame();
+        solvedTable = BoardHandler::NewSolvedTable();
+
+        solution = dfs(startState, order, info);
+
+        delete[] solvedTable;
         delete order;
+
     } else if (strcmp(strategy.c_str(), "astr") == 0) {
         Varieties::Heuristics heuristic = GetHeuristic(params);
-        solution = strategies.astr(startState, heuristic, info);
+
+        Board::InitializeSame();
+        solvedTable = BoardHandler::NewSolvedTable();
+
+        solution = astr(startState, heuristic, info);
+
+        delete[] solvedTable;
     }
 
     const double executionTime = info.GetTime();
