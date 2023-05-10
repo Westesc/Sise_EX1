@@ -1,8 +1,7 @@
 ﻿#include "inc/Framework.hpp"
 
-#include "inc/Manager.hpp"
+#include "inc/FifteenPuzzleSolver.hpp"
 #include <iostream>
-
 
 int main(int argumentsCount, char** arguments) {
 
@@ -27,8 +26,10 @@ int main(int argumentsCount, char** arguments) {
         return 1;
     }
 
-    Manager manager(arguments);
-    manager.FindSolution();
+    std::cout << "all good" << std::endl;
+
+    FifteenPuzzleSolver fifteenPuzzleSolver(arguments);
+    fifteenPuzzleSolver.FindSolution();
 
     return 0;
 }

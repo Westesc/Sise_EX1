@@ -1,9 +1,9 @@
 #pragma once
 #include "Framework.hpp"
 
+#include "puzzle/astar/Compare.hpp"
 #include "puzzle/BoardHandler.hpp"
-#include "puzzle/Astar/Compare.hpp"
-#include "puzzle/Astar/State.hpp"
+#include "puzzle/astar/State.hpp"
 #include "puzzle/Heuristics.hpp"
 #include "InfoBundle.hpp"
 
@@ -79,7 +79,7 @@ OperationPath Strategies::bfs(
             if (neighbour == nullptr)                                       // illegal move or trivial(for example RL or UD)
                 continue;
 
-            if (same(solvedTable, neighbour->first.table.data())) {         /// if n is solution:
+            if (same(solvedTable, neighbour->first.table.data(), Board::length)) {         /// if n is solution:
                 // solution found!
                 infoBundle.visited++;
                 infoBundle.SetMaxDepth((int)neighbour->second.path.size());
@@ -136,7 +136,7 @@ OperationPath Strategies::dfs(
 
     infoBundle.visited++;
 
-    if (same(startState.first.table.data(), solvedTable))                   /// if s is solution:
+    if (same(startState.first.table.data(), solvedTable, Board::length))                   /// if s is solution:
         return { Varieties::None };										        /// 	return success
 
     std::stack<State> openStates;									        /// S - stack
@@ -172,7 +172,7 @@ OperationPath Strategies::dfs(
                 infoBundle.visited++;
                 infoBundle.SetMaxDepth((int)neighbour->second.path.size());
 
-                if (same(solvedTable, neighbour->first.table.data())) {     /// if n is solution:
+                if (same(solvedTable, neighbour->first.table.data(), Board::length)) {     /// if n is solution:
                     OperationPath solution = neighbour->second;
                     delete neighbour;
                     return solution;						                /// return success
@@ -214,9 +214,8 @@ OperationPath Strategies::astr(
 ) const {
     infoBundle.visited++;
 
-    if (same(startState.first.table.data(), solvedTable))   	                        /// if s is solution:
-        return { Varieties::None };											                /// 	return success
-
+    if (same(startState.first.table.data(), solvedTable, Board::length))   	            /// if s is solution:
+        return { Varieties::None };											            /// 	return success
     if (Heuristics == Varieties::hamm)
         heuristic = &Heuristics::Hamming;
     else if (Heuristics == Varieties::manh)
@@ -238,7 +237,7 @@ OperationPath Strategies::astr(
         State stateMut(currentState->state);
         openStates.pop();
 
-        if (same(solvedTable, stateMut.first.table.data())) 	                        /// if n is solution:
+        if (same(solvedTable, stateMut.first.table.data(), Board::length)) 	            /// if n is solution:
             return stateMut.second;									                    /// 	return success
 
         auto it = processedStates.insert(stateMut);

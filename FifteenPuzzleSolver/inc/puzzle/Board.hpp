@@ -1,15 +1,12 @@
 #pragma once
 #include "../Framework.hpp"
 
-//#include "../includes.h"
+#include "IsSame.hpp"
 
 #include <algorithm>
 #include <iostream>
 #include <cstdint>
 #include <utility>
-
-using Same = bool(*)(const uint8*, const uint8*);
-Same same = nullptr;
 
 // key of hashmap
 struct Board {
@@ -35,63 +32,12 @@ uint8 Board::height;
 
 using State = std::pair<Board, OperationPath>;
 
-
-
-bool SameMod8(
-    const uint8* solved,
-    const uint8* State
-) {
-    auto solved_ptr = (uint64*)solved,
-        state_ptr = (uint64*)State;
-    uint8 steps = Board::length >> 3;
-    bool retVal = true;
-    for (uint8 i = 0; i < steps; i++, solved_ptr++, state_ptr++) {
-        if ((*solved_ptr ^ *state_ptr) != 0) { // 0 if same
-            retVal = false;
-        }
-    }
-    return retVal;
-}
-
-bool SameMod4(
-    const uint8* solved, 
-    const uint8* State
-) {
-    auto solved_ptr = (uint32*)solved,
-        state_ptr = (uint32*)State;
-    uint8_t steps = Board::length >> 2;
-    bool retVal = true;
-    for (uint8 i = 0; i < steps; i++, solved_ptr++, state_ptr++) {
-        if (*solved_ptr ^ *state_ptr) {
-            retVal = false;
-        }
-    }
-    return retVal;
-}
-
-bool SameAny(
-    const uint8* solved, 
-    const uint8* State
-) {
-    auto solved_ptr = solved,
-        state_ptr = State;
-
-    bool retVal = true;
-    for (uint8 i = 0; i < Board::length; i++, solved_ptr++, state_ptr++) {
-        if (*solved_ptr ^ *state_ptr) {
-            retVal = false;
-        }
-    }
-    return retVal;
-}
-
 Board::Board(
     std::vector<uint8>  table
 ) : table(std::move(table)) {
 
     auto it = std::find(this->table.begin(), this->table.end(), 0);
     zeroIndex = it - this->table.begin();                                   // If no zero was found zeroIndex = table.length() !
-
 }
 
 Board::Board(const Board& o) : zeroIndex(o.zeroIndex), table(o.table) {}
@@ -100,19 +46,19 @@ Board::Board(const Board& o) : zeroIndex(o.zeroIndex), table(o.table) {}
 void Board::InitializeSame() {
 
     if (Board::length % 8 == 0) {
-        same = &SameMod8;
+        same = &IsSameMod8;
     } else if (Board::length % 4 == 0) {
-        same = &SameMod4;
+        same = &IsSameMod4;
     } else {
-        same = &SameAny;
+        same = &IsSameAny;
     }
 
 }
 
 
 bool Board::operator==(const Board& other) const {
-    if (same == &SameMod8 || same == &SameMod4 || same == &SameAny) {
-        return same(this->table.data(), other.table.data());
+    if (same == &IsSameMod8 || same == &IsSameMod4 || same == &IsSameAny) {
+        return same(this->table.data(), other.table.data(), Board::length);
     }
     return false;
 }

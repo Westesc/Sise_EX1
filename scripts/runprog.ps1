@@ -1,4 +1,4 @@
-# Run a program supposed to solve the 15-puzzle in a batch mode using various
+﻿# Run a program supposed to solve the 15-puzzle in a batch mode using various
 # strategies for searching the state space and applying them to all the initial
 # states of the puzzle stored in files in the current directory.
 #
@@ -23,7 +23,7 @@
 
 param([string]$strategy, [string]$param)
 
-$Progcmd = 'echo program'
+$Progcmd = 'D:\Storage\Projects\School\sise\Sise_EX1\FifteenPuzzleSolver\x64\Release\FifteenPuzzleSolver.exe'
 $Orders = @('RDUL', 'RDLU', 'DRUL', 'DRLU', 'LUDR',  'LURD', 'ULDR', 'ULRD')
 $Heuristics = @('hamm', 'manh')
 $InitFilenameRegex = '^[a-zA-Z0-9]+_[0-9]+_[0-9]+.txt$'
@@ -34,7 +34,7 @@ function RunProg([string]$strategy, [string]$param) {
         $SolFilename = '{0}_sol.txt' -f $FilenameRoot
         $StatsFilename = '{0}_stats.txt' -f $FilenameRoot
         Invoke-Expression $('{0} {1} {2} {3} {4} {5}' -f $Progcmd, $strategy, $param, $_.Name, $SolFilename,
-        $StatsFilename)
+                            $StatsFilename)
     }
 }
 

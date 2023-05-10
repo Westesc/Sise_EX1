@@ -7,7 +7,7 @@
 
 #include <iomanip>
 
-class Manager {
+class FifteenPuzzleSolver {
     InfoBundle info;
     //uint8 strategy;
     string strategy, params, 
@@ -17,19 +17,19 @@ class Manager {
     static Varieties::Heuristics GetHeuristic(string state);
 
 public:
-    Manager(string newStrategy, string newParams, string newFileStart, string newFileResult, string newFileExtra);
-    Manager(char** arguments);
+    FifteenPuzzleSolver(string newStrategy, string newParams, string newFileStart, string newFileResult, string newFileExtra);
+    FifteenPuzzleSolver(char** arguments);
 
     void FindSolution();
 };
 
-Manager::Manager(char** argv) : info(), strategy(argv[1]), params(argv[2]), fileStart(argv[3]), fileResult(argv[4]), fileExtra(argv[5]) {}
+FifteenPuzzleSolver::FifteenPuzzleSolver(char** argv) : info(), strategy(argv[1]), params(argv[2]), fileStart(argv[3]), fileResult(argv[4]), fileExtra(argv[5]) {}
 
-Manager::Manager(string newStrategy, string newParams, string newFileStart, string newFileResult, string newFileExtra) :
+FifteenPuzzleSolver::FifteenPuzzleSolver(string newStrategy, string newParams, string newFileStart, string newFileResult, string newFileExtra) :
     info(), strategy(std::move(newStrategy)), params(std::move(newParams)), fileStart(std::move(newFileStart)),
     fileResult(std::move(newFileResult)), fileExtra(std::move(newFileExtra)) {}
 
-Varieties::Operators* Manager::GetOrder(
+Varieties::Operators* FifteenPuzzleSolver::GetOrder(
     string state
 ) {
     if (state.size() == 4) {
@@ -61,7 +61,7 @@ Varieties::Operators* Manager::GetOrder(
     throw std::logic_error("incorrect operators count");
 }
 
-Varieties::Heuristics Manager::GetHeuristic(
+Varieties::Heuristics FifteenPuzzleSolver::GetHeuristic(
     string state
 ) {
     std::transform(state.begin(), state.end(), state.begin(), ::tolower);
@@ -74,7 +74,7 @@ Varieties::Heuristics Manager::GetHeuristic(
     return Varieties::error;
 }
 
-void Manager::FindSolution() {
+void FifteenPuzzleSolver::FindSolution() {
 
     FileStartState startStateHandler(fileStart);
     const State startState = startStateHandler.GetState();
